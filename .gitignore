@@ -1,0 +1,7 @@
+.*
+!.git*
+!.jiri_manifest
+bin
+*.o
+*.d
+iso

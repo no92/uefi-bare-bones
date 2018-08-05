@@ -1,0 +1,8 @@
+<manifest>
+  <projects>
+	<project
+		name="zircon-uefi"
+		remote="https://github.com/no92/zircon-uefi"
+		path="kernel/include/efi"/>
+  </projects>
+</manifest>
