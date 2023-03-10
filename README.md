@@ -1,18 +1,38 @@
 # UEFI Bare Bones
 A minimal "Hello World" kernel.
 
-# Prerequisites
-* git, wget, make, the text editor of your choice, …
-* [jiri](https://github.com/fuchsia-mirror/jiri)
-* clang with lld-link-6.0 or binutils + gcc with the x86_64-w64-mingw32 target (on Ubuntu run `apt install clang lld-6.0` or `apt install mingw-w64-x86-64-dev`)
-* mtools (for building FAT32 images): `apt install mtools`
-* xorriso (for building CDs, depends on mtools): `apt install xorriso`
+## Prerequisites
 
-# Building
-Make sure [jiri](https://github.com/fuchsia-mirror/jiri) is installed. Running `make prepare` will set up the environment by running `jiri update`, which will pull the zircon UEFI headers into `kernel/include/efi`.
+* git, wget, meson, the text editor of your choice, …
+* clang with lld-link
 
-Running `make kernel` (or alternatively simply `make`) will build the kernel. Testing in QEMU is set up and run by `make test`.
+## Building
 
-## Build options
-* setting USE_GCC=1 switches the compiler from clang to gcc
-* setting MODE=fat builds a FAT32 disk image, MODE=cd creates a CD `.iso`, while passing MODE=dir (which it defaults to) puts everything in bin/hdd
+Set up a build directory. Run `meson setup --cross-file uefi.cross-file <your build directory>`. In the build directory, run `ninja`.
+
+Example:
+
+```sh
+mkdir -p build
+meson setup --cross-file=uefi.cross-file build
+cd build
+ninja
+```
+
+## Running
+
+Make sure you have a `OVMF.fd` ready. If you have a OVMF package installed, it can usually be copied from a path like `/usr/share/ovmf/x64/`.
+
+Set up an ESP in the build directory like this:
+
+```sh
+cp /usr/share/ovmf/x64/OVMF.fd .
+mkdir -p esp/EFI/BOOT/
+cp BOOTX64.EFI esp/EFI/BOOT
+```
+
+After this, you can run QEMU. A recommended setup looks like this:
+
+```sh
+qemu-system-x86_64 -drive if=pflash,format=raw,file=OVMF.fd -M accel=kvm:tcg -net none -serial stdio -drive format=raw,file=fat:rw:esp
+```
