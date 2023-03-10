@@ -1,0 +1,30 @@
+[binaries]
+c = 'clang'
+cpp = 'clang'
+c_ld = 'lld'
+
+[properties]
+needs_exe_wrapper = true
+
+[built-in options]
+c_args = [
+	'-target', 'x86_64-unknown-windows',
+	'-ffreestanding',
+	'-fno-stack-protector',
+	'-fshort-wchar',
+	'-mno-red-zone',
+	'-mno-mmx',
+	'-mno-sse',
+	]
+c_link_args = [
+	'-target', 'x86_64-unknown-windows',
+	'-nostdlib',
+	'-Wl,-entry:efi_main',
+	'-Wl,-subsystem:efi_application',
+	]
+
+[host_machine]
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+system = 'uefi'
+endian = 'little'
